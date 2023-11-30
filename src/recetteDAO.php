@@ -1,5 +1,4 @@
 <?php
-include("recette.php");
 class RecetteDAO {
     private $bdd;
 
@@ -10,7 +9,7 @@ class RecetteDAO {
     public function ajouterRecette(Recette $recette) {
         //Ajout du personnage
         try {
-            $requete = $this->bdd->prepare("INSERT INTO recettes (id_categorie, nom, `image`, difficulte, duree, nb_personnes, texte) VALUES (?, ?, ?)");
+            $requete = $this->bdd->prepare("INSERT INTO recettes (id_categorie, nom, `image`, difficulte, duree, nb_personne, texte) VALUES (?, ?, ?, ?, ?, ?, ?)");
             $requete->execute([$recette->getIdCategorie(),$recette->getNom(), $recette->getImage(), $recette->getDifficulte(),$recette->getDuree(),$recette->getNbPersonnes(),$recette->getTexte()]);
             return true;
         } catch (PDOException $e) {
@@ -72,13 +71,27 @@ class RecetteDAO {
             $resultat = $requete->fetch(PDO::FETCH_ASSOC);
 
             if ($resultat) {
-                return new Recette($resultat['id_categorie'], $resultat['nom'], $resultat['image'], $resultat['difficulte'],$resultat['duree'], $resultat['nb_personnes'], $resultat['texte'],);
+                return new Recette($resultat['id_categorie'], $resultat['nom'], $resultat['image'], $resultat['difficulte'],$resultat['duree'], $resultat['nb_personne'], $resultat['texte'],);
             } else {
                 return null;
             }
         } catch (PDOException $e) {
             echo "Erreur lors de la recherche de la recette par ID: " . $e->getMessage();
             return null;
+        }
+    }
+    public function getAffichageDetailsRecette($nom) {
+        try {
+            $query = "SELECT * FROM recettes WHERE nom = :nom";
+            $stmt = $this->bdd->prepare($query);
+            $stmt->bindParam(':nom', $nom);
+            $stmt->execute();
+            
+            // Utilisez fetch pour obtenir un tableau associatif des données de la recette
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            // Gérer les erreurs de requête SQL ici
+            return false;
         }
     }
 
@@ -116,23 +129,23 @@ class RecetteDAO {
             return null;
         }
     }
-    public function ajouterNiveau(Niveaux $niveaux) {
-        //Ajout des niveau (utilisé qu'au début afin de remplir un minimum la base de données)
-        try {
-            $requete = $this->bdd->prepare("INSERT INTO niveauxs (numero, difficulte, nombre_requis_etoile, nombre_dispo_etoile) VALUES (?, ?, ?, ?)");
-            $requete->execute([$niveaux->getNumero(), $niveaux->getDifficulte(), $niveaux->getNbrEtoileDebloqueNiveau(), $niveaux->getNombreEtoileDispo()]);
-            return true;
-        } catch (PDOException $e) {
-            echo "Erreur d'ajout de niveaux: " . $e->getMessage();
-            return false;
-        }
-
-    }
 
     public function listerRecettes() {
         //Liste des personnage en selectionnant toute la table
         try {
             $requete = $this->bdd->prepare("SELECT * FROM recettes");
+            $requete->execute();
+            return $requete->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            echo "Erreur de récupération des recettes: " . $e->getMessage();
+            return [];
+        }
+    }
+
+    public function listerRecettesAccueil() {
+        //Liste des personnage en selectionnant toute la table
+        try {
+            $requete = $this->bdd->prepare("SELECT nom, `image`, difficulte FROM recettes");
             $requete->execute();
             return $requete->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
