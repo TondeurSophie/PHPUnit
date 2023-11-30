@@ -1,12 +1,13 @@
 <?php
 
-include("config.php");
-include("recette.php");
-include("recetteDAO.php");
+// include("config.php");
+// include("recette.php");
+require_once("recetteDAO.php");
+require_once("config.php");
+require_once("recette.php");
 
 //Récuperation du nom de la recette de l'URL
-$nom_recette = $_GET['nom'];
-
+$nom_recette = isset($_GET['nom']) ? $_GET['nom'] : null;
 $recetteDAO = new RecetteDAO($connexion);
 
 //Récupération en fonction du nom récupéré plus-haut pour afficher toutes les informations sur les recettes
