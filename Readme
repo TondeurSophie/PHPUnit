@@ -1,1 +1,9 @@
+Lancer le projet dans le terminal :
+- Il faut mettre le dossier du projet dans le dossier de wamp, www
+
+Lancer les tests avec PhpUnit :
+- Installation dans le dossier qui héberge tous le projet :
+   composer require --dev phpunit/phpunit
+- Pour tester les tests unitaires dans le terminal :
+   .\vendor\bin\phpunit
 
