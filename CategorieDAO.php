@@ -26,11 +26,14 @@ class CategorieDAO {
     }
 
     public function supprimerCategorie(Categorie $categories) {
+        if(is_string($categories->getId())||$categories->getNom() != ""){
+            throw new InvalidArgumentException("erreur de format des informations");
+        }
         try {
             $requete = $this->bdd->prepare("DELETE FROM categories WHERE id = ?");
             //Execution de la requete avec les valeurs de l'objet categories
             $requete->execute([$categories->getId()]);
-            var_dump($categories);
+            // var_dump($categories);
 
             //Retourne vrai en cas de succes
             return true;
@@ -43,6 +46,9 @@ class CategorieDAO {
     }
 
     public function modifierCategorie($id, $nouveauNom) {
+        if($id =="" || $nouveauNom ==""|| is_string($id) || is_int($nouveauNom) ||preg_match('/\s/',$nouveauNom) || preg_match('/[0-9]/',$nouveauNom)){
+            throw new InvalidArgumentException("ne correspond pas aux attentes");
+        }
         try {
             $requete = $this->bdd->prepare("UPDATE categories SET nom = ? WHERE id = ?");
             $requete->execute([$nouveauNom, $id]);

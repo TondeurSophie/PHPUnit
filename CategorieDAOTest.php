@@ -60,15 +60,30 @@ class CategorieDAOTest extends TestCase{
             $this->assertEquals($expected,$nom);
         }
         else if($fonction == "supprimer"){
-            $categories=new Categorie(7,"tester");
-            $this->categorie->ajouterCategorie($categories);
-            $this->categorie->supprimerCategorie($id);
-            $stmt = $this->pdo->query("SELECT * FROM categories WHERE id = :id");
+            if(is_string($id)||$nom != ""){
+                $this->expectException(InvalidArgumentException::class);
+                $this->expectExceptionMessage("erreur de format des informations");
+            }
+            $categories=new Categorie($id,$nom);
+            $this->categorie->supprimerCategorie($categories);
+            $stmt = $this->pdo->prepare("SELECT * FROM categories WHERE id = :id");
             $stmt->bindParam(":id",$id);
             $categories=$stmt->fetch(PDO::FETCH_ASSOC);
-
+            // var_dump($categories);
             $this->assertFalse($categories);
             
+        }
+        else if($fonction == "modifier"){
+            if($id == "" || $nom == "" || is_string($id) || is_int($nom) ||preg_match('/\s/',$nom) || preg_match('/[0-9]/',$nom)){
+                $this->expectException(InvalidArgumentException::class);
+                $this->expectExceptionMessage("ne correspond pas aux attentes");
+            }
+            $this->categorie->modifierCategorie($id,$nom);
+            $stmt=$this->pdo->prepare("SELECT * FROM categories WHERE id = :id");
+            $stmt->bindParam(":id",$id);
+            $categories=$stmt->fetch(PDO::FETCH_ASSOC);
+            // var_dump($categories);
+            $this->assertEquals($expected,$nom);
         }
         
     }
@@ -88,8 +103,17 @@ class CategorieDAOTest extends TestCase{
             ["ajouter"," dv fg ",""," dv fg "],
             ["ajouter","13","","13"],
 
-            ["supprimer","",7,""]
+            ["supprimer","",29,""],
+            ["supprimer","","",""],
+            ["supprimer","","29",""],
+            ["supprimer","",29,"qsdfrgt"],
 
+            ["modifier","test",26,"test"],
+            ["modifier","","",""],
+            ["modifier","","1",""],
+            ["modifier","",1,2],
+            ["modifier"," ",1," "],
+            ["modifier","1234",1,"1234"],
         ];
     }
 
