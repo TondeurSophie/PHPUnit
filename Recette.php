@@ -11,13 +11,13 @@ class Recette {
     private $nb_personnes;
     private $texte;
 //Constructeur avec $nom, $niveau, $etoile de defini
-    public function __construct($id_categorie,$nom, $image, $difficulte, $duree, $nb_personnes, $texte) {
+    public function __construct($id_categorie,$nom, $image, $difficulte, $duree, $nb_personne, $texte) {
         $this->id_categorie = $id_categorie;
         $this->nom = $nom;
         $this->image = $image;
         $this->difficulte = $difficulte;
         $this->duree = $duree;
-        $this->nb_personnes = $nb_personnes;
+        $this->nb_personnes = $nb_personne;
         $this->texte = $texte;
     }
 //Get afin d'obtenir toutes les valeurs de mes objets au fur et a mesure des besoins
@@ -47,6 +47,10 @@ class Recette {
     }
     public function getTexte() {
         return $this->texte;
+    }
+
+    public function setId($id){
+        $this->id=$id;
     }
 }
 
