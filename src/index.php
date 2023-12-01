@@ -5,13 +5,15 @@ include("recetteDAO.php");
 include("details_recette.php");
 
 $recetteDAO = new RecetteDAO($connexion);
-$recherche = isset($_GET['search']) ? $_GET['search'] : '';
 
-$recettes = empty($recherche) ? $recetteDAO->listerRecettesAccueil() : $recetteDAO->trouverRecettesParNom($recherche);
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+    $recherche = isset($_GET['search']) ? $_GET['search'] : '';
+    $selectedCategorie = isset($_GET['categorie']) ? $_GET['categorie'] : '';
 
-// echo "<pre>";
-// print_r($recettes);
-// echo "</pre>";
+    $categories = $recetteDAO->trouverRecettesCategorie($selectedCategorie);
+
+    $recettes = empty($recherche) ? $recetteDAO->listerRecettesAccueil() : $recetteDAO->trouverRecettesParNom($recherche);
+}
 ?>
 
 <!DOCTYPE html>
@@ -28,32 +30,42 @@ $recettes = empty($recherche) ? $recetteDAO->listerRecettesAccueil() : $recetteD
     <form action="" method="get">
         <label for="search">Rechercher par nom :</label>
         <input type="text" id="search" name="search" value="<?= htmlspecialchars($recherche) ?>">
+
+        <label for="categorie">Catégorie :</label>
+        <select id="categorie" name="categorie">
+            <option value="" <?= ($selectedCategorie === '') ? 'selected' : '' ?>>entree</option>
+            <?php foreach ($categories as $categorie) : ?>
+                <option value="<?= htmlspecialchars($categorie) ?>" <?= ($selectedCategorie === $categorie) ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($categorie) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+
         <button type="submit">Rechercher</button>
     </form>
 
     <?php
-    // echo("Coucou");
-    // Affichage des recettes
-    if (!empty($recettes)) {
-        foreach ($recettes as $recette) {
-            echo "<div>";
-            
-            // Utiliser un lien pour rediriger vers la page de détails avec le nom de la recette en tant que paramètre
-            echo "<a href='details_recette.php?nom=" . urlencode($recette->getNom()) . "'>";
-            echo "<p>Nom : " . $recette->getNom() . "</p>";
-            echo "</a>";
-            
-            if (!empty($recette->getImage())) {
-                echo "<img src='" . $recette->getImage() . "' alt='Image de la recette'>";
+    if ($_SERVER["REQUEST_METHOD"] == "GET") {
+        //Affichage des recettes
+        if (!empty($recettes)) {
+            foreach ($recettes as $recette) {
+                echo "<div>";
+
+                echo "<a href='details_recette.php?nom=" . urlencode($recette->getNom()) . "'>";
+                echo "<p>Nom : " . $recette->getNom() . "</p>";
+                echo "</a>";
+
+                if (!empty($recette->getImage())) {
+                    echo "<img src='" . $recette->getImage() . "' alt='Image de la recette'>";
+                }
+
+                echo "<p>Difficulté : " . $recette->getDifficulte() . "</p>";
+                echo "</div>";
+                echo "<hr>";
             }
-            
-            echo "<p>Difficulté : " . $recette->getDifficulte() . "</p>";
-            echo "</div>";
-            echo "<hr>";
+        } else {
+            echo "<p>Aucune recette trouvée.</p>";
         }
-    } else {
-        // Si aucune recette trouvée
-        echo "<p>Aucune recette trouvée.</p>";
     }
     ?>
 

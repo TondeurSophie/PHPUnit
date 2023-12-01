@@ -2,10 +2,11 @@
 require_once("recetteDAO.php");
 require_once("config.php");
 require_once("recette.php");
-//Récuperation des valeurs du formulaire
+
+//Récupération des valeurs du formulaire
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $categorie=$_POST['categorie'];
-    $id_categorie=$categorie;
+    $categorie = $_POST['categorie'];
+    $id_categorie = $categorie;
     $nom = $_POST['nom'];
     $image = $_POST['image'];
     $difficulte = $_POST['difficulte'];
@@ -14,11 +15,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $texte = $_POST['texte'];
 
     $recetteDAO = new RecetteDAO($connexion);
-    $nouvelleRecette=new Recette($id_categorie,$nom, $image, $difficulte, $duree, $nb_personne, $texte);
-    $success = $recetteDAO->ajouterRecette($nouvelleRecette);
 
+    $nouvelleRecette = new Recette($id_categorie, $nom, $image, $difficulte, $duree, $nb_personne, $texte);
+    $success = $recetteDAO->ajouterRecette($nouvelleRecette);
+$ingredients = isset($_POST['ingredients']) ? $_POST['ingredients'] : [];
+$quantites = isset($_POST['quantites']) ? $_POST['quantites'] : [];
+
+$successRecette = $recetteDAO->ajouterRecette($nouvelleRecette);
+
+$idRecette = $recetteDAO->trouverDernierId();
+
+for ($i = 0; $i < count($ingredients); $i++) {
+    $ingredient = $ingredients[$i];
+    $quantite = $quantites[$i];
+
+    $successRelation = $recetteDAO->ajouterRelationIngredientRecette($ingredient, $quantite, $idRecette);
+}
     if ($success) {
         echo "<p>Recette ajoutée avec succès.</p>";
+
+        $idRecette = $recetteDAO->trouverDernierId();
+
+        // Ajout des ingrédients dans la table ingredient_recette
+        if (isset($_POST['ingredients']) && isset($_POST['quantites'])) {
+            $ingredients = $_POST['ingredients'];
+            $quantites = $_POST['quantites'];
+
+            foreach ($ingredients as $key => $ingredient) {
+                $quantite = $quantites[$key];
+
+                $recetteDAO->ajouterRecetteIngredient($idRecette, $ingredient, $quantite);
+            }
+        }
     } else {
         echo "<p>Erreur lors de l'ajout de la recette.</p>";
     }
@@ -31,17 +59,54 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ajouter une Recette</title>
+    <script>
+        function ajouterIngredient() {
+            var nouvelIngredient = document.createElement("div");
+
+            var nomIngredient = document.createElement("input");
+            nomIngredient.type = "text";
+            nomIngredient.name = "ingredients[]";
+            nomIngredient.placeholder = "Nouvel ingrédient";
+            nouvelIngredient.appendChild(nomIngredient);
+
+            var quantiteIngredient = document.createElement("input");
+            quantiteIngredient.type = "text";
+            quantiteIngredient.name = "quantites[]";
+            quantiteIngredient.placeholder = "Quantité";
+            nouvelIngredient.appendChild(quantiteIngredient);
+
+            var boutonSupprimer = document.createElement("button");
+            boutonSupprimer.type = "button";
+            boutonSupprimer.textContent = "Supprimer";
+            boutonSupprimer.onclick = function() {
+                nouvelIngredient.remove();
+            };
+            nouvelIngredient.appendChild(boutonSupprimer);
+
+            var listeIngredients = document.getElementById("listeIngredients");
+            listeIngredients.appendChild(nouvelIngredient);
+        }
+    </script>
 </head>
 <body>
 
     <h1>Ajouter une recette</h1>
-<!-- Formulaire a remplir pour ajouter une recette (tous les champs sont obligatoires) -->
+
     <form method="post" action="">
         <label>Nom de la recette:</label>
         <input type="text" name="nom" required><br>
 
         <label>Categorie:</label>
         <input type="text" name="categorie" required><br>
+
+        <label>Ingrédients:</label>
+        <div id="listeIngredients">
+            <div>
+                <input type="text" name="ingredients[]" placeholder="Ingrédient 1" required>
+                <input type="text" name="quantites[]" placeholder="Quantité 1" required>
+                <button type="button" onclick="ajouterIngredient()">Ajouter un ingrédient</button>
+            </div>
+        </div>
 
         <label>Image (URL):</label>
         <input type="text" name="image" required><br>
@@ -65,4 +130,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <a href="index.php">Retour à la liste des recettes</a>
 
 </body>
-</html>
+</html

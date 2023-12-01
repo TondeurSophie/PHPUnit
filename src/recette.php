@@ -50,6 +50,8 @@ class Recette {
     }
 }
 
+
+
 class Ingredient {
     //Variable en private car pas appelé en dehors de la class et pas besoin du public 
     private $id;
@@ -74,7 +76,10 @@ class Ingredient {
     public function getQuantite() {
         return $this->quantite;
     }
+
+    
 }
+
 
 
 ?>

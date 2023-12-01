@@ -8,13 +8,13 @@ class RecetteDAO {
 
     public function ajouterRecette(Recette $recette) {
         // var_dump($recette);
-        if($recette->getNom() == "" || is_string($recette->getIdCategorie()) || $recette->getImage()==""||$recette->getDifficulte()=="" ||$recette->getDuree()==""||is_string($recette->getNbPersonnes())||$recette->getTexte()==""){
-            throw new InvalidArgumentException("champs invalide");
-        }else if(preg_match('/\s/',$recette->getNom()) ||preg_match('/\s/',$recette->getImage()) || preg_match('/\s/',$recette->getDifficulte()) ||preg_match('/\s/',$recette->getDuree())){
-            throw new InvalidArgumentException("champs invalide");
-        }else if(preg_match('/[0-9]/',$recette->getNom()) || preg_match('/[0-9]/',$recette->getDifficulte())){
-            throw new InvalidArgumentException("champs invalide");
-        }
+        // if($recette->getNom() == "" || is_string($recette->getIdCategorie()) || $recette->getImage()==""||$recette->getDifficulte()=="" ||$recette->getDuree()==""||is_string($recette->getNbPersonnes())||$recette->getTexte()==""){
+        //     throw new InvalidArgumentException("champs invalide");
+        // }else if(preg_match('/\s/',$recette->getNom()) ||preg_match('/\s/',$recette->getImage()) || preg_match('/\s/',$recette->getDifficulte()) ||preg_match('/\s/',$recette->getDuree())){
+        //     throw new InvalidArgumentException("champs invalide");
+        // }else if(preg_match('/[0-9]/',$recette->getNom()) || preg_match('/[0-9]/',$recette->getDifficulte())){
+        //     throw new InvalidArgumentException("champs invalide");
+        // }
         //Ajout du personnage
         try {
             $requete = $this->bdd->prepare("INSERT INTO recettes (id_categorie, nom, `image`, difficulte, duree, nb_personne, texte) VALUES (?, ?, ?,?,?,?,?)");
@@ -187,6 +187,141 @@ class RecetteDAO {
             return $requete->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             echo "Erreur de récupération des recettes: " . $e->getMessage();
+            return [];
+        }
+    }
+
+    public function trouverRecettesCategorie($categorieNom) {
+    
+        try {
+            $requete = $this->bdd->prepare("
+                SELECT id, nom, image, difficulte, duree, nb_personne, texte
+                FROM recettes
+                WHERE id_categorie = (
+                    SELECT id
+                    FROM categories
+                    WHERE nom = ?
+                )
+            ");
+            $requete->execute([$categorieNom]);
+            $resultats = $requete->fetchAll(PDO::FETCH_ASSOC);
+    
+            $recettes = [];
+            foreach ($resultats as $resultat) {
+                $recettes[] = new Recette(
+                    $resultat['id'],
+                    $resultat['nom'],
+                    $resultat['image'],
+                    $resultat['difficulte'],
+                    $resultat['duree'],
+                    $resultat['nb_personne'],
+                    $resultat['texte']
+                );
+            }
+    
+            return $recettes;
+        } catch (PDOException $e) {
+            echo "Erreur lors de la recherche de recettes par catégorie: " . $e->getMessage();
+            return [];
+        }
+    }
+
+    
+
+    public function ajouterRecetteIngredient($idRecette, $idIngredient, $quantite) {
+        try {
+            $requete = $this->bdd->prepare("INSERT INTO recette_ingredient (id_recette, id_ingredient, quantite) VALUES (?, ?, ?)");
+            $requete->execute([$idRecette, $idIngredient, $quantite]);
+        } catch (PDOException $e) {
+            echo "Erreur lors de l'ajout de la relation recette-ingredient: " . $e->getMessage();
+        }
+    }
+    public function trouverDernierId() {
+        try {
+            $requete = $this->bdd->prepare("SELECT MAX(id) AS dernier_id FROM recettes");
+            $requete->execute();
+            $resultat = $requete->fetch(PDO::FETCH_ASSOC);
+    
+            if ($resultat && isset($resultat['dernier_id'])) {
+                return $resultat['dernier_id'];
+            } else {
+                return null;
+            }
+        } catch (PDOException $e) {
+            echo "Erreur lors de la récupération du dernier ID : " . $e->getMessage();
+            return null;
+        }
+    }
+
+    public function ajouterRelationIngredientRecette($nomIngredient, $quantite, $idRecette) {
+        try {
+            // Récupérer l'ID de l'ingrédient s'il existe
+            $idIngredient = $this->trouverIdIngredientParNom($nomIngredient);
+    
+            if ($idIngredient === null) {
+                // Si l'ingrédient n'existe pas, ajoutez-le à la table des ingrédients
+                $idIngredient = $this->ajouterIngredient($nomIngredient);
+                if ($idIngredient === null) {
+                    // Gérez l'erreur selon vos besoins
+                    return false;
+                }
+            }
+    
+            $requete = $this->bdd->prepare("INSERT INTO recette_ingredient (id_ingredient, id_recette, quantite) VALUES (?, ?, ?)");
+            $requete->execute([$idIngredient, $idRecette, $quantite]);
+    
+            return true;
+        } catch (PDOException $e) {
+            echo "Erreur lors de l'ajout de la relation recette-ingredient: " . $e->getMessage();
+            return false;
+        }
+    }
+    
+    public function ajouterIngredient($nomIngredient) {
+        try {
+            $requete = $this->bdd->prepare("INSERT INTO ingredients (nom) VALUES (?)");
+            $requete->execute([$nomIngredient]);
+    
+            return $this->bdd->lastInsertId();
+        } catch (PDOException $e) {
+            echo "Erreur lors de l'ajout de l'ingrédient: " . $e->getMessage();
+            return null;
+        }
+    }
+    
+    public function trouverIdIngredientParNom($nomIngredient) {
+        try {
+            $requete = $this->bdd->prepare("SELECT id FROM ingredients WHERE nom = ?");
+            $requete->execute([$nomIngredient]);
+            $resultat = $requete->fetch(PDO::FETCH_ASSOC);
+    
+            return ($resultat && isset($resultat['id'])) ? $resultat['id'] : null;
+        } catch (PDOException $e) {
+            echo "Erreur lors de la recherche de l'ID de l'ingrédient: " . $e->getMessage();
+            return null;
+        }
+    }
+
+    public function getIngredientsRecette($nom_recette) {
+        try {
+            $requete = $this->bdd->prepare("
+                SELECT i.nom, ri.quantite
+                FROM ingredients i
+                JOIN recette_ingredient ri ON i.id = ri.id_ingredient
+                JOIN recettes r ON r.id = ri.id_recette
+                WHERE r.nom = ?
+            ");
+            $requete->execute([$nom_recette]);
+            $resultats = $requete->fetchAll(PDO::FETCH_ASSOC);
+
+            $ingredients = [];
+            foreach ($resultats as $resultat) {
+                $ingredients[] = $resultat['nom'] . ' (' . $resultat['quantite'] . ')';
+            }
+
+            return $ingredients;
+        } catch (PDOException $e) {
+            echo "Erreur lors de la récupération des ingrédients de la recette : " . $e->getMessage();
             return [];
         }
     }
