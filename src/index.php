@@ -21,11 +21,16 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liste des Recettes</title>
+ 
+    <link href="Style.css" rel="stylesheet">
+
+    <title>Cook Book Web</title>
 </head>
 <body>
-
-    <h1>Liste des Recettes</h1>
+    <img  src="https://c8.alamy.com/compfr/f4j1ty/des-legumes-frais-prets-a-preparer-la-salade-regime-alimentaire-sain-de-l-espace-pour-l-arriere-plan-concept-texte-f4j1ty.jpg" alt="image" width="100%" height="15%"></img>
+    <center><h1 class="titre">Cook Book Web</h1></center>
+    <h2>Liste des Recettes</h2>
+    <p >
 
     <form action="" method="get">
         <label for="search">Rechercher par nom :</label>

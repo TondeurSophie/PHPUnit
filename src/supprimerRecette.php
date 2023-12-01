@@ -40,3 +40,11 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     echo "<p>Méthode de requête incorrecte.</p>";
 }
 ?>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="Style.css" rel="stylesheet">
+    <title>Ajouter une Recette</title>
+</head>

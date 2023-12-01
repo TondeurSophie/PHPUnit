@@ -58,6 +58,7 @@ for ($i = 0; $i < count($ingredients); $i++) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="Style.css" rel="stylesheet">
     <title>Ajouter une Recette</title>
     <script>
         function ajouterIngredient() {

@@ -1,3 +1,11 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="Style.css" rel="stylesheet">
+    <title>Ajouter une Recette</title>
+</head>
 <?php
 
 require_once("recetteDAO.php");
@@ -25,14 +33,22 @@ if ($details_recette_data !== false) {
     );
 
     // Affichage HTML en récupérant pour l'objet
-    echo "<h1>Détails de la recette</h1>";
-    echo "<p>Nom : " . $details_recette->getNom() . "</p>";
+    echo "<center><h1>Détails de la recette</h1></center>";
+    echo"<br/>";
+    echo "<div class='case'>";
+    echo "<li>Nom : " . $details_recette->getNom() . "</li>";
+    echo"<br/>";
     echo "<img src='" . $details_recette->getImage() . "' alt='Image de la recette'>";
-    echo "<p>Difficulté : " . $details_recette->getDifficulte() . "</p>";
-    echo "<p>Durée : " . $details_recette->getDuree() . "</p>";
-    echo "<p>Nombre de personnes : " . $details_recette->getNbPersonnes() . "</p>";
-    echo "<p>Description : " . $details_recette->getTexte() . "</p>";
-
+    echo"<br/>";
+    echo "<li>Difficulté : " . $details_recette->getDifficulte() . "</li>";
+    echo"<br/>";
+    echo "<li>Durée : " . $details_recette->getDuree() . "</li>";
+    echo"<br/>";
+    echo "<li>Nombre de personnes : " . $details_recette->getNbPersonnes() . "</li>";
+    echo"<br/>";
+    echo "<li>Description : " . $details_recette->getTexte() . "</li>";
+    echo"<br/>";
+    echo "</div>";
     // Afficher la liste des ingrédients associés à la recette
     $ingredients_recette = $recetteDAO->getIngredientsRecette($details_recette->getNom());
     if (!empty($ingredients_recette)) {
