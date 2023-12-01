@@ -17,3 +17,4 @@ C:\wamp\www\PHPUnit\BDD\Examen\PHPUnit\src> C:\wamp\bin\php\php8.0.26\php.exe .\
 - Pour certaines exception sur les fichiers DAO sont commenté pour le bon fonctionnement du front. Les tests unitaires fonctionnent.
 Sur le pc de Sophie l'image est correctement mise, non sur le pc de morgane.
 - Sur le pc de Sophie, tous les tests unitaires fonctionnent, ainsi que l'affchage.
+-la modification de recette ne fonctionne pas mais le script est la branche modification
