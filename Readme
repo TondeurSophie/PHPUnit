@@ -15,4 +15,5 @@ C:\wamp\www\PHPUnit\BDD\Examen\PHPUnit\src> C:\wamp\bin\php\php8.0.26\php.exe .\
 
 - Pour la recherche il faut décommenter le code de index.php. Cela faisait des erreurs pour lister
 - Pour certaines exception sur les fichiers DAO sont commenté pour le bon fonctionnement du front. Les tests unitaires fonctionnent.
-Sur le pc de Sophie l'image est correctement mise, non sur le pc de morgane
+Sur le pc de Sophie l'image est correctement mise, non sur le pc de morgane.
+- Sur le pc de Sophie, tous les tests unitaires fonctionnent, ainsi que l'affchage.
