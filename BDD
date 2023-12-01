@@ -1,0 +1,49 @@
+CREATE DATABASE cuisine;
+USE cuisine;
+
+CREATE TABLE categories (
+    -> id int primary key auto_increment,
+    -> nom varchar(100));
+
+CREATE TABLE recettes (
+    -> id int primary key auto_increment,
+    -> id_categorie int(11),
+    -> FOREIGN KEY (id_categorie) REFERENCES categories (id),
+    -> nom VARCHAR(100),
+    -> image VARCHAR(500),
+    -> difficulte VARCHAR(100),
+    -> duree VARCHAR(100),
+    -> nb_personne INT(11),
+    -> texte VARCHAR(1000));
+
+CREATE TABLE ingredients (
+    -> id int primary key auto_increment,
+    -> nom varchar(100));
+
+ CREATE TABLE recette_ingredient (
+    -> id_ingredient int(11),
+    -> FOREIGN KEY (id_ingredient) REFERENCES ingredients (id),
+    -> id_recette int(11),
+    -> FOREIGN KEY (id_recette) REFERENCES recettes (id),
+    -> quantite varchar(200));
+
+INSERT INTO categories VALUES (1,"entree");
+INSERT INTO categories VALUES (2,"plat");
+INSERT INTO categories VALUES (3,"dessert");
+INSERT INTO categories VALUES (4,"vegetarien");
+
+INSERT INTO ingredients VALUES (1,"farine");
+INSERT INTO ingredients VALUES (2,"oeuf");
+INSERT INTO ingredients VALUES (3,"pomme");
+INSERT INTO ingredients VALUES (4,"poire");
+INSERT INTO ingredients VALUES (5,"banane");
+INSERT INTO ingredients VALUES (6,"salade");
+INSERT INTO ingredients VALUES (7,"jus d'orange");
+
+INSERT INTO recettes VALUES (1,3,"Salade de fruits","https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.marmiton.org%2Frecettes%2Frecette_la-meilleure-salade-de-fruit-et-tres-rafraichissante_527967.aspx&psig=AOvVaw0XsN5wlhWKMmZxHe_-xBH2&ust=1701515233673000&source=images&cd=vfe&opi=89978449&ved=0CA8QjRxqFwoTCLigmKuM7oIDFQAAAAAdAAAAABAD","Facile","10 min",2,"Prenez 2 pommes et 2 poires. Rincez les et coupez les en morceaux. Mettez les morceaux dans un saladier et ajouter du jus d'orange.");
+INSERT INTO recettes VALUES (2,1,"Salade aux pommes","https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.galbani.fr%2Frecettes%2Fsalades%2Fsalade-de-mozzarella-avec-des-pommes&psig=AOvVaw3K807_ktUTfHCF9f9oyefG&ust=1701515505657000&source=images&cd=vfe&opi=89978449&ved=0CA8QjRxqFwoTCPCckq2N7oIDFQAAAAAdAAAAABAD","Facile","10 min",2,"Laver la salade et les 2 pommes. Coupez les pommes en morceaux et mettez les feuilles de salade. Vous pouvez les couper un peu. Mélangez le tout.");
+
+INSERT INTO recette_ingredient VALUES (3,1,"2 pommes");
+INSERT INTO recette_ingredient VALUES (4,1,"2 poires");
+INSERT INTO recette_ingredient VALUES (6,2,"1 petite salade");
+INSERT INTO recette_ingredient VALUES (3,2,"2 pommes");
