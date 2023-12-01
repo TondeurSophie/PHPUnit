@@ -23,5 +23,8 @@ class Ingredient {
     public function getQuantite() {
         return $this->quantite;
     }
+    public function setId($id){
+        $this->id=$id;
+    }
 }
 ?>
