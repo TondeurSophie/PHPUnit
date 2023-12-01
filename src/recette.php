@@ -50,6 +50,8 @@ class Recette {
     }
 }
 
+
+
 class Ingredient {
     //Variable en private car pas appelé en dehors de la class et pas besoin du public 
     private $id;
@@ -74,26 +76,10 @@ class Ingredient {
     public function getQuantite() {
         return $this->quantite;
     }
+
+    
 }
 
-class Categories {
-    //Variable en private car pas appelé en dehors de la class et pas besoin du public 
-    private $id;
-    private $nom;
-   
-//Constructeur avec $numero, $difficulte, $nbretoiledebloqueniveau, $nombreetoiledispo
-    public function __construct($nom) {
-        $this->nom = $nom;
-    }
-//Get afin d'obtenir toutes les valeurs de mes objets au fur et a mesure des besoins
-//Les get permettent de récupérer des paramètres particuliers dans mes objets
-    public function getId() {
-        return $this->id;
-    }
 
-    public function getNom() {
-        return $this->nom;
-    }
 
-}
 ?>
